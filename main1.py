@@ -177,7 +177,7 @@ def create_radial(models: list, params: list, values: list):
     ax.set_ylim(0, max(max(v) for v in values) * 1.1)
     ax.grid(True, alpha=0.3)
     ax.legend(loc='upper right', bbox_to_anchor=(1.3, 1.1))
-    plt.title("Сравнение относительных характеристик (база = первый образец)", pad=20)
+    plt.title("Сравнение относительных характеристик", pad=20)
     plt.show()
 
 def plot_bubble_chart(appliances, tech_levels, appliance_type):
@@ -210,9 +210,9 @@ def plot_bubble_chart(appliances, tech_levels, appliance_type):
     for i, name in enumerate(names):
         plt.annotate(name, (tech_vals[i], prices[i]), xytext=(5, 5),
                      textcoords='offset points', fontsize=8, alpha=0.8)
-    plt.xlabel("Технический уровень (относительно эталона)", fontsize=12)
+    plt.xlabel("Технический уровень", fontsize=12)
     plt.ylabel("Цена, руб", fontsize=12)
-    plt.title(f"Пузырьковая диаграмма: ТУ vs Цена ({appliance_type})\nРазмер пузырька = {size_key}", fontsize=14)
+    plt.title(f"Пузырьковая диаграмма, ({appliance_type})\nРазмер пузырька = {size_key}", fontsize=14)
     plt.grid(True, alpha=0.3, linestyle='--')
     cbar = plt.colorbar(scatter, label="Технический уровень")
     cbar.ax.set_ylabel("ТУ", rotation=270, labelpad=15)
@@ -265,16 +265,15 @@ class TechLevelApp(ctk.CTk):
         self.appliances = []
         self.entries = {}
         self.type_var = ctk.StringVar(value="Стиральные машины")
-        self.current_mode = "calc"  # calc, forecast, optim
+        self.current_mode = "calc"
 
         self.setup_ui()
 
     def setup_ui(self):
-        # Главный контейнер
+
         self.main_frame = ctk.CTkFrame(self, fg_color="#FFE4E1")
         self.main_frame.pack(fill="both", expand=True, padx=20, pady=10)
 
-        # Верхняя панель с переключателем режимов
         mode_frame = ctk.CTkFrame(self.main_frame, fg_color="#FFF0F5")
         mode_frame.pack(fill="x", pady=(0, 10))
 
@@ -291,15 +290,12 @@ class TechLevelApp(ctk.CTk):
         self.mode_selector.set("Расчёт ТУ")
         self.mode_selector.pack(side="left", padx=10, expand=True, fill="x")
 
-        # Контейнер для содержимого режимов
         self.content_frame = ctk.CTkFrame(self.main_frame, fg_color="#FFE4E1")
         self.content_frame.pack(fill="both", expand=True)
 
-        # Режим "Расчёт ТУ" – все рабочие виджеты
         self.calc_frame = ctk.CTkFrame(self.content_frame, fg_color="#FFE4E1")
         self.calc_frame.pack(fill="both", expand=True)
 
-        # Создаём виджеты расчёта внутри calc_frame
         top_frame = ctk.CTkFrame(self.calc_frame, fg_color="#FFF0F5")
         top_frame.pack(fill="x", padx=10, pady=5)
 
@@ -313,12 +309,10 @@ class TechLevelApp(ctk.CTk):
         ctk.CTkButton(top_frame, text="Добавить вручную", command=self.add_manually,
                       fg_color="#FF69B4", hover_color="#FF1493", text_color="white").pack(side="right", padx=5)
 
-        # Фрейм для формы ввода
         self.input_frame = ctk.CTkFrame(self.calc_frame, fg_color="#FFF0F5")
         self.input_frame.pack(side="left", fill="both", expand=True, padx=10, pady=10)
         self.build_input_form("Стиральные машины")
 
-        # Фрейм для списка
         self.list_frame = ctk.CTkFrame(self.calc_frame, fg_color="#FFF0F5")
         self.list_frame.pack(side="right", fill="both", expand=True, padx=10, pady=10)
 
@@ -328,7 +322,6 @@ class TechLevelApp(ctk.CTk):
         ctk.CTkButton(self.list_frame, text="Очистить список", command=self.clear_list,
                       fg_color="#FF69B4", hover_color="#FF1493", text_color="white").pack(pady=5)
 
-        # Кнопки расчёта
         calc_buttons = ctk.CTkFrame(self.calc_frame, fg_color="#FFE4E1")
         calc_buttons.pack(side="bottom", fill="x", padx=10, pady=10)
 
@@ -340,23 +333,20 @@ class TechLevelApp(ctk.CTk):
                       fg_color="#FF69B4", hover_color="#FF1493", text_color="white",
                       command=self.run_bubble_chart).pack(fill="x", pady=2)
 
-        # Режим "Прогнозирование" – заглушка
         self.forecast_frame = ctk.CTkFrame(self.content_frame, fg_color="#FFF0F5")
         forecast_label = ctk.CTkLabel(self.forecast_frame, text="Функция прогнозирования находится в разработке",
                                       font=ctk.CTkFont(size=20, weight="bold"), text_color="#8B008B")
         forecast_label.pack(expand=True)
-        # Режим "Оптимизация" – заглушка
+
         self.optim_frame = ctk.CTkFrame(self.content_frame, fg_color="#FFF0F5")
         optim_label = ctk.CTkLabel(self.optim_frame, text="Функция оптимизации находится в разработке",
                                    font=ctk.CTkFont(size=20, weight="bold"), text_color="#8B008B")
         optim_label.pack(expand=True)
 
-        # Показываем начальный режим
         self.change_mode("Расчёт ТУ")
 
     def change_mode(self, mode):
-        """Переключает видимый фрейм в зависимости от выбранного режима"""
-        # Скрываем все фреймы
+
         self.calc_frame.pack_forget()
         self.forecast_frame.pack_forget()
         self.optim_frame.pack_forget()
